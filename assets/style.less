@@ -1,0 +1,24 @@
+/**
+ * Main app styles.
+ */
+
+@import "colors.less";
+
+// Views
+@import "views/input.less";
+@import "views/loading.less";
+
+body {
+  background-color: @bg_color;
+  color: @text_color;
+  font-size: 12pt;
+  font-family: Arial, sans-serif;
+}
+
+.AppView {
+  display: none;
+
+  &.isActive {
+    display: block;
+  }
+}

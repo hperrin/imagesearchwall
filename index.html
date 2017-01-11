@@ -3,18 +3,25 @@
 <head>
   <title>Image Search Wall by Hunter Perrin</title>
   <link rel="stylesheet/less" type="text/css" href="assets/style.less" />
-  <script type="text/javascript" src="assets/less.js"></script>
+  <script type="text/javascript" src="assets/lessjs/less.js"></script>
   <script type="text/javascript" src="app.js"></script>
 </head>
 <body>
   <div id="app">
-    <!-- Include loading styles inline so they show immediately on render. -->
-    <section
-        id="LoadingView"
-        style="height: 100vh; display: flex; align-items: center; justify-content: center;">
-      <!-- Loading indicator by http://loading.io/ -->
-      <svg width="76px" height="76px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-ripple"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g> <animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.33;1" values="1;1;0"></animate><circle cx="50" cy="50" r="16.381" stroke="#00ec93" fill="none" stroke-width="4" stroke-linecap="round"><animate attributeName="r" dur="2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.33;1" values="0;22;44"></animate></circle></g><g><animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin="1s" keyTimes="0;0.33;1" values="1;1;0"></animate><circle cx="50" cy="50" r="35.6503" stroke="#ff7c41" fill="none" stroke-width="4" stroke-linecap="round"><animate attributeName="r" dur="2s" repeatCount="indefinite" begin="1s" keyTimes="0;0.33;1" values="0;22;44"></animate></circle></g></svg>
+    <section id="InputView" class="AppView isActive" aria-hidden="false">
+      <div id="InputContainer">
+        <h1>Image Search</h1>
+        <input type="text" name="q" id="QueryInput" />
+      </div>
     </section>
+
+    <section id="LoadingView" class="AppView" aria-hidden="true">
+      <div id="LoadingContainer">
+        <!-- Loading indicator by http://loading.io/ -->
+        <svg width="76px" height="76px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-ripple"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g> <animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.33;1" values="1;1;0"></animate><circle cx="50" cy="50" r="16.381" stroke="#00ec93" fill="none" stroke-width="4" stroke-linecap="round"><animate attributeName="r" dur="2s" repeatCount="indefinite" begin="0s" keyTimes="0;0.33;1" values="0;22;44"></animate></circle></g><g><animate attributeName="opacity" dur="2s" repeatCount="indefinite" begin="1s" keyTimes="0;0.33;1" values="1;1;0"></animate><circle cx="50" cy="50" r="35.6503" stroke="#ff7c41" fill="none" stroke-width="4" stroke-linecap="round"><animate attributeName="r" dur="2s" repeatCount="indefinite" begin="1s" keyTimes="0;0.33;1" values="0;22;44"></animate></circle></g></svg>
+      </div>
+    </section>
+
   </div>
   <script type="text/html">
     loadApp();
