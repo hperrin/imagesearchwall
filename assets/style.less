@@ -8,15 +8,23 @@
 @import "views/input.less";
 @import "views/loading.less";
 
-body {
+html, body {
+  height: 100%;
   background-color: @bg_color;
   color: @text_color;
-  font-size: 12pt;
-  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+#App {
+  height: 100%;
 }
 
 .AppView {
   display: none;
+  height: 100%;
 
   &.isActive {
     display: block;
