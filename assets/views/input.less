@@ -17,11 +17,36 @@
     margin: 16px 0;
   }
 
-  #QueryInput {
-    font-size: 24px;
+  #QueryContainer {
+    box-sizing: border-box;
     border: 1px @text_color solid;
-    color: @text_color;
-    background-color: @primary_lt;
+    display: flex;
+    align-items: center;
+    height: 38px;
     padding: 4px;
+
+    #QueryInput {
+      box-sizing: border-box;
+      height: 28px;
+      font-size: 24px;
+      line-height: 24px;
+      border: 0;
+      color: @text_color;
+      width: 600px;
+      padding-right: 4px;
+
+      &:focus {
+        outline: 0;
+      }
+    }
+
+    #QuerySubmit {
+      height: 28px;
+      font-size: 20px;
+      line-height: 20px;
+      border: 0;
+      color: @primary_lt;
+      background-color: @primary_dm;
+    }
   }
 }
