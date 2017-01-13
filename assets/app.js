@@ -54,6 +54,10 @@ window.loadApp = function () {
     App.elems.views[newView].setAttribute('aria-hidden', 'false')
   }
 
+  /**
+   * Perform a Flickr JSONP image search.
+   * @param  {string} query The search query.
+   */
   App.doSearch = function (query) {
     App.switchView('LoadingView')
 
@@ -103,6 +107,10 @@ window.loadApp = function () {
     document.getElementsByTagName('head')[0].appendChild(jsonpScript)
   }
 
+  /**
+   * Make a photo grid out of a photo descriptor array.
+   * @param  {Array<Object>} photos Photo desriptors.
+   */
   App.makeGrid = function (photos) {
     // Go through photos, adding them to the grid.
     for (var i = 0; i < photos.length; i++) {
@@ -116,6 +124,10 @@ window.loadApp = function () {
     App.elems.ui.Grid.scrollTop = 0
   }
 
+  /**
+   * Select on of the photos. (Opens it in a lightbox.)
+   * @param  {Element} item The photo grid element.
+   */
   App.selectItem = function (item) {
     App.deselectItems()
     if (item) {
@@ -124,6 +136,9 @@ window.loadApp = function () {
     }
   }
 
+  /**
+   * Deselect any currently selected photo.
+   */
   App.deselectItems = function () {
     for (var i = 0; i < App.elems.ui.Grid.children.length; i++) {
       App.elems.ui.Grid.children[i].classList.remove('isSelected')
@@ -132,6 +147,7 @@ window.loadApp = function () {
 
   // == Set up event listeners.
 
+  // Submitting the query.
   App.elems.ui.QueryContainer.addEventListener('submit', function (e) {
     e.preventDefault()
     if (App.elems.ui.QueryInput.value === '') return false
@@ -139,6 +155,8 @@ window.loadApp = function () {
     App.doSearch(App.elems.ui.QueryInput.value)
     return false
   })
+
+  // Editing text in the query box.
   App.elems.ui.QueryInput.addEventListener('input', function () {
     if (App.elems.ui.QueryInput.value === '') {
       App.elems.ui.QuerySubmit.setAttribute('disabled', 'disabled')
@@ -146,6 +164,8 @@ window.loadApp = function () {
       App.elems.ui.QuerySubmit.removeAttribute('disabled')
     }
   })
+
+  // Clicking the back button from the Grid view.
   App.elems.ui.BackButton.addEventListener('click', function () {
     App.elems.ui.QueryInput.value = ''
     App.elems.ui.QuerySubmit.setAttribute('disabled', 'disabled')
@@ -156,11 +176,15 @@ window.loadApp = function () {
       App.elems.ui.Grid.removeChild(App.elems.ui.Grid.lastChild)
     }
   })
+
+  // Setting focus on a photo element.
   App.elems.ui.Grid.addEventListener('focusin', function (e) {
     if (e.target.classList.contains('GridItem')) {
       App.selectItem(e.target)
     }
   }, true)
+
+  // Pressing a key in the app.
   document.addEventListener('keydown', function (e) {
     var selectedItem = document.getElementsByClassName('isSelected')[0]
     if (selectedItem) {
@@ -178,6 +202,8 @@ window.loadApp = function () {
       }
     }
   })
+
+  // Clicking on a photo or its controls.
   App.elems.ui.Grid.addEventListener('mousedown', function (e) {
     // Find the clicked grid item.
     var target = e.target
