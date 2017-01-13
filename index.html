@@ -27,15 +27,23 @@
     </section>
 
     <section id="GridView" class="AppView" aria-hidden="true">
+      <button id="BackButton">
+        &lt;
+      </button>
       <div id="Grid" />
     </section>
 
   </div>
 
   <script type="text/html" id="GridItemTpl">
-    <div class="GridItem">
-      <img src="{{url}}" alt="{{description}}" />
-      <span class="GridItemTitle">{{description}} <br /> - {{author}}</span>
+    <div class="GridItem" tabindex="0">
+      <img src="http://placehold.it/150/3FE9A9/034682?text=◎" class="GridItemPlaceholder" />
+      <img src="{{urlThumb}}" alt="{{title}}" class="GridItemThumb" />
+      <div style="background-image: url({{urlMain}})" class="GridItemMain">
+        <button class="GridItemPrevButton">&lt;</button>
+        <button class="GridItemNextButton">&gt;</button>
+        <span class="GridItemTitle">{{title}} <br /> - {{author}}</span>
+      </div>
     </div>
   </script>
 

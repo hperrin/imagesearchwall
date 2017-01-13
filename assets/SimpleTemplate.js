@@ -10,9 +10,10 @@
 
 /**
  * A simple HTML template.
- * @param {string} id The ID of the template element.
+ * @param {string|Element} idOrElem The ID of the template element or the
+ *   Element.
  */
-window.SimpleTemplate = function (id) {
+window.SimpleTemplate = function (idOrElem) {
   /**
    * Template variable values.
    * @type {!{!string, !string}}
@@ -25,16 +26,18 @@ window.SimpleTemplate = function (id) {
    * @type {!Element}
    * @private
    */
-  this.elem_ = document.getElementById(id)
+  this.elem_ = idOrElem instanceof window.Element
+    ? idOrElem
+    : document.getElementById(idOrElem)
 
   if (!this.elem_) {
-    throw new Error('Template with ID, ' + id + ', not found.')
+    throw new Error('Template with ID, ' + idOrElem + ', not found.')
   }
 }
 
 /**
  * Set the value of a variable.
- * @param {!string} name  The name of the variable.
+ * @param {!string} name The name of the variable.
  * @param {*} value The value to be inserted in the template.
  */
 window.SimpleTemplate.prototype.setValue = function (name, value) {
@@ -42,8 +45,20 @@ window.SimpleTemplate.prototype.setValue = function (name, value) {
 }
 
 /**
+ * Set the value of multiple variables.
+ * @param {!Array<!string, *>} values A map of the variables.
+ */
+window.SimpleTemplate.prototype.setValues = function (values) {
+  for (var name in values) {
+    if (!values.hasOwnProperty(name)) continue
+
+    this.setValue(name, values[name])
+  }
+}
+
+/**
  * Get the value of a variable
- * @param {!string} name  The name of the variable.
+ * @param {!string} name The name of the variable.
  * @return {!string} The value.
  */
 window.SimpleTemplate.prototype.getValue = function (name) {
@@ -54,6 +69,7 @@ window.SimpleTemplate.prototype.getValue = function (name) {
  * Get the HTML safe value of a string or string like object.
  * @param  {*} value The untrusted object.
  * @return {!string} A safe string.
+ * @private
  */
 window.SimpleTemplate.prototype.safeValue_ = function (value) {
   var tmpElem = document.createElement('span')
@@ -62,10 +78,11 @@ window.SimpleTemplate.prototype.safeValue_ = function (value) {
 }
 
 /**
- * Render the template.
+ * Render the template's HTML.
  * @return {!string} The resulting HTML.
+ * @private
  */
-window.SimpleTemplate.prototype.render = function () {
+window.SimpleTemplate.prototype.renderHTML_ = function () {
   var html = this.elem_.innerHTML
 
   for (var name in this.values_) {
@@ -77,4 +94,15 @@ window.SimpleTemplate.prototype.render = function () {
   }
 
   return html
+}
+
+/**
+ * Render the template
+ * @return {!Element} The template's rendered element.
+ */
+window.SimpleTemplate.prototype.render = function () {
+  var html = this.renderHTML_()
+  var tmpElem = document.createElement('div')
+  tmpElem.innerHTML = html
+  return tmpElem.children[0]
 }

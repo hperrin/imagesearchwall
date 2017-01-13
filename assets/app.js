@@ -20,6 +20,7 @@ window.loadApp = function () {
       QueryContainer: document.getElementById('QueryContainer'),
       QueryInput: document.getElementById('QueryInput'),
       QuerySubmit: document.getElementById('QuerySubmit'),
+      BackButton: document.getElementById('BackButton'),
       Grid: document.getElementById('Grid')
     },
 
@@ -57,7 +58,32 @@ window.loadApp = function () {
     App.switchView('LoadingView')
 
     window.jsonFlickrApi = function (jsonResult) {
-      console.log('jsonResult: ', jsonResult)
+      // Handle error.
+      if (jsonResult.stat === 'fail') {
+        window.alert('An error occured (' +
+          jsonResult.code + '): ' + jsonResult.message)
+        App.switchView('InputView')
+        return
+      }
+      if (jsonResult.photos.photo.length === 0) {
+        window.alert('No results were found.')
+        App.switchView('InputView')
+        return
+      }
+      var photos = []
+      for (var i = 0; i < jsonResult.photos.photo.length; i++) {
+        if (!jsonResult.photos.photo[i].url_l ||
+          jsonResult.photos.photo[i].url_l === '') continue
+        if (!jsonResult.photos.photo[i].url_q ||
+          jsonResult.photos.photo[i].url_q === '') continue
+        photos.push({
+          'urlMain': jsonResult.photos.photo[i].url_l,
+          'urlThumb': jsonResult.photos.photo[i].url_q,
+          'title': jsonResult.photos.photo[i].title,
+          'author': jsonResult.photos.photo[i].ownername
+        })
+      }
+      App.makeGrid(photos)
     }
 
     var url = 'https://api.flickr.com/services/rest/' +
@@ -67,13 +93,41 @@ window.loadApp = function () {
       '&safe_search=1' +
       '&content_type=1' +
       '&media=photos' +
-      '&extras=description,owner_name,url_sq,url_l' +
+      '&extras=owner_name,url_q,url_l' +
+      '&per_page=500' +
       '&text=' + window.encodeURIComponent(query)
     var jsonpScript = document.createElement('script')
     jsonpScript.setAttribute('type', 'text/javascript')
     jsonpScript.setAttribute('src', url)
 
     document.getElementsByTagName('head')[0].appendChild(jsonpScript)
+  }
+
+  App.makeGrid = function (photos) {
+    // Go through photos, adding them to the grid.
+    for (var i = 0; i < photos.length; i++) {
+      var template = new window.SimpleTemplate(App.elems.templates.GridItemTpl)
+      template.setValues(photos[i])
+      App.elems.ui.Grid.appendChild(template.render())
+    }
+
+    // Switch to the grid view.
+    App.switchView('GridView')
+    App.elems.ui.Grid.scrollTop = 0
+  }
+
+  App.selectItem = function (item) {
+    App.deselectItems()
+    if (item) {
+      item.classList.add('isSelected')
+      item.focus()
+    }
+  }
+
+  App.deselectItems = function () {
+    for (var i = 0; i < App.elems.ui.Grid.children.length; i++) {
+      App.elems.ui.Grid.children[i].classList.remove('isSelected')
+    }
   }
 
   // == Set up event listeners.
@@ -92,4 +146,61 @@ window.loadApp = function () {
       App.elems.ui.QuerySubmit.removeAttribute('disabled')
     }
   })
+  App.elems.ui.BackButton.addEventListener('click', function () {
+    App.elems.ui.QueryInput.value = ''
+    App.elems.ui.QuerySubmit.setAttribute('disabled', 'disabled')
+    App.switchView('InputView')
+
+    // Clear the grid of existing items.
+    while (App.elems.ui.Grid.hasChildNodes()) {
+      App.elems.ui.Grid.removeChild(App.elems.ui.Grid.lastChild)
+    }
+  })
+  App.elems.ui.Grid.addEventListener('focusin', function (e) {
+    if (e.target.classList.contains('GridItem')) {
+      App.selectItem(e.target)
+    }
+  }, true)
+  document.addEventListener('keydown', function (e) {
+    var selectedItem = document.getElementsByClassName('isSelected')[0]
+    if (selectedItem) {
+      switch (e.keyCode) {
+        case 27: // Esc
+          App.deselectItems()
+          selectedItem.blur()
+          break
+        case 39: // Right arrow
+          App.selectItem(selectedItem.nextSibling)
+          break
+        case 37: // Left arrow
+          App.selectItem(selectedItem.previousSibling)
+          break
+      }
+    }
+  })
+  App.elems.ui.Grid.addEventListener('mousedown', function (e) {
+    // Find the clicked grid item.
+    var target = e.target
+    while (target.parentElement) {
+      if (target.classList.contains('GridItem')) {
+        break
+      }
+      target = target.parentElement
+    }
+    if (!target.parentElement) return
+
+    // Handle whatever was clicked.
+    if (e.target.classList.contains('GridItemPrevButton')) {
+      App.selectItem(target.previousSibling)
+    } else if (e.target.classList.contains('GridItemNextButton')) {
+      App.selectItem(target.nextSibling)
+    } else if (target.classList.contains('isSelected')) {
+      App.deselectItems()
+    } else {
+      App.selectItem(target)
+    }
+    target.blur()
+    e.preventDefault()
+    return false
+  }, true)
 }
