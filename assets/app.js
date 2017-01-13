@@ -44,8 +44,8 @@ window.loadApp = function () {
   App.switchView = function (newView) {
     for (var view in App.elems.views) {
       if (!App.elems.views.hasOwnProperty(view)) continue
-      // This line means the app won't work in IE<10, but the requirements are
-      // only the latest version, so that's OK.
+      // Using classList means the app won't work in IE<10, but the requirements
+      // are only the latest version, so that's OK.
       App.elems.views[view].classList.remove('isActive')
       App.elems.views[view].setAttribute('aria-hidden', 'true')
     }
@@ -76,6 +76,7 @@ window.loadApp = function () {
       }
       var photos = []
       for (var i = 0; i < jsonResult.photos.photo.length; i++) {
+        // Don't include broken images.
         if (!jsonResult.photos.photo[i].url_l ||
           jsonResult.photos.photo[i].url_l === '') continue
         if (!jsonResult.photos.photo[i].url_q ||
@@ -108,7 +109,7 @@ window.loadApp = function () {
   }
 
   /**
-   * Make a photo grid out of a photo descriptor array.
+   * Make the photo grid out of a photo descriptor array.
    * @param  {Array<Object>} photos Photo desriptors.
    */
   App.makeGrid = function (photos) {
@@ -221,6 +222,8 @@ window.loadApp = function () {
     } else if (e.target.classList.contains('GridItemNextButton')) {
       App.selectItem(target.nextSibling)
     } else if (target.classList.contains('isSelected')) {
+      // This happens when the photo is open, and the user clicks somewhere,
+      // like the big photo or the overlay.
       App.deselectItems()
     } else {
       App.selectItem(target)
